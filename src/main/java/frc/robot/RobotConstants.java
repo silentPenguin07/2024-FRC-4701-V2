@@ -129,7 +129,7 @@ public final class RobotConstants {
         }
     }
 
-    /*
+    /**
     // TODO: Might need these later
     public static class AutoConstants 
     {
@@ -148,10 +148,10 @@ public final class RobotConstants {
 
         // TODO: UPDATE THESE VALUES
 
-        public static final int leadMotorId = 29;
-        public static final int followerMotorId = 30;
+        public static final int leadMotorId = 12;
+        public static final int followerMotorId = 13;
 
-        public static final double shaftEncoderOffset_deg = 4.22; // needs to be tuned
+        public static final double shaftEncoderOffset_deg = 0; // needs to be tuned
 
         // pid
         public static final double kP = .000095;
@@ -179,7 +179,7 @@ public final class RobotConstants {
         // public static final int gearRatio = 1; // 1 IS PLACEHOLDER
 
         // closeEnough
-        public static final double accuracyTolerance_deg = .6;
+        public static final double accuracyTolerance_deg = 10;
 
     }
 

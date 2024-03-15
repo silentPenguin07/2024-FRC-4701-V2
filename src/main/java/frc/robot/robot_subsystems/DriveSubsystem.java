@@ -85,18 +85,15 @@ public class DriveSubsystem extends EntechSubsystem{
             this::driveRobotRelative,
             new HolonomicPathFollowerConfig(4.5, Units.inchesToMeters(21.287), new ReplanningConfig()),
             () -> {
-                // Boolean supplier that controls when the path will be mirrored for the red alliance
-                // This will flip the path being followed to the red side of the field.
-                // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
 
                 var alliance = DriverStation.getAlliance();
-                if (alliance.isPresent()) {
+                if (alliance.isPresent())
+                {
                     return alliance.get() == DriverStation.Alliance.Red;
                 }
                 return false;
             },
             this // Reference to this subsystem to set requirements
-
         );
 
         // set up custom logging to add the current path to a field 2d widget
@@ -122,7 +119,7 @@ public class DriveSubsystem extends EntechSubsystem{
         return m_odometry.getPoseMeters();
     }
     public Command auton() {
-        return new PathPlannerAuto("Straight Auto");
+        return new PathPlannerAuto("Auto1");
     }
 
     /**

@@ -8,6 +8,7 @@ import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkBase.SoftLimitDirection;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkAbsoluteEncoder;
 import com.revrobotics.SparkPIDController;
 import com.revrobotics.SparkPIDController.AccelStrategy;
@@ -15,6 +16,7 @@ import com.revrobotics.SparkPIDController.AccelStrategy;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -27,7 +29,8 @@ public class ArmSubsystem extends SubsystemBase {
 	private SparkPIDController pidController = leadMotor.getPIDController();
 	//private RelativeEncoder motorEncoder = leadMotor.getEncoder(); // built-in encoder in the lead NEO
 	// throughbore encoder on hex shaft
-	private AbsoluteEncoder shaftEncoder = leadMotor.getAbsoluteEncoder(SparkAbsoluteEncoder.Type.kDutyCycle);
+	private DutyCycleEncoder absEncoder = new DutyCycleEncoder(1);
+	private RelativeEncoder shaftEncoder = leadMotor.getEncoder();
 
 	private ArmFeedforward feedforwardController = new ArmFeedforward(kS, kG, kV, kA);
 
@@ -48,7 +51,7 @@ public class ArmSubsystem extends SubsystemBase {
 		leadMotor.setSoftLimit(SoftLimitDirection.kReverse, (float) (-1.5 + shaftEncoderOffset_deg));
 		leadMotor.enableSoftLimit(SoftLimitDirection.kForward, true);
 		leadMotor.enableSoftLimit(SoftLimitDirection.kReverse, true);
-
+		
 		followerMotor.restoreFactoryDefaults();
 		followerMotor.setIdleMode(IdleMode.kBrake);
 		followerMotor.setSmartCurrentLimit(40);
@@ -60,8 +63,8 @@ public class ArmSubsystem extends SubsystemBase {
 		shaftEncoder.setPositionConversionFactor(360);
 		// rev / sec * sec / min = RPM
 		shaftEncoder.setVelocityConversionFactor(60);
-		shaftEncoder.setInverted(true);
-		shaftEncoder.setZeroOffset(0);
+		//shaftEncoder.setInverted(true);
+		//shaftEncoder.setOffset(0);
 
 		pidController.setFeedbackDevice(shaftEncoder);
 		// Smart motion applies a velocity and acceleration limiter as it travels to the target position. More info can be
@@ -106,8 +109,8 @@ public class ArmSubsystem extends SubsystemBase {
 		SmartDashboard.putNumber("Follower Motor Motor Temperature", followerMotor.getMotorTemperature());
 		SmartDashboard.putNumber("Follower Motor Motor Percent Output", followerMotor.getAppliedOutput());
 
-		SmartDashboard.putNumber("Abs Encoder Position Deg", shaftEncoder.getPosition() - shaftEncoderOffset_deg);
-		SmartDashboard.putNumber("Abs Encoder Velocity", shaftEncoder.getVelocity());
+		SmartDashboard.putNumber("Rel Encoder Position Deg", shaftEncoder.getPosition() - shaftEncoderOffset_deg);
+		SmartDashboard.putNumber("Abs Encoder Position Deg", absEncoder.getAbsolutePosition() * 360);
 
 	}
 

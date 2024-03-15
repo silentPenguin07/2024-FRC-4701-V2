@@ -2,7 +2,7 @@ package frc.robot.commands.arm;
 
 import frc.robot.RobotConstants.ArmConstants;
 import frc.robot.robot_subsystems.ArmSubsystem;
-
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class SetArmPosition extends Command {
@@ -19,7 +19,7 @@ public class SetArmPosition extends Command {
 	 */
 	public SetArmPosition(ArmSubsystem arm, double targetPosition_deg) {
 		this.arm = arm;
-		this.targetPosition_rad = targetPosition_deg;
+		this.targetPosition_rad = Units.degreesToRadians(targetPosition_deg);
 		addRequirements(arm);
 	}
 
