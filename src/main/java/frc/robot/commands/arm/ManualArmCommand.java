@@ -34,7 +34,7 @@ public class ManualArmCommand extends Command {
 
         double ySquared = Math.copySign(yConstrained * yConstrained, yConstrained);
 
-        if (ySquared < 0)
+        if (ySquared < 0) //TODO: does this account for tolerance?
         {
             arm.stop();
         }
