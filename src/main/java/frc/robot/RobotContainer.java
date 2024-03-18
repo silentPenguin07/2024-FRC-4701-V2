@@ -1,59 +1,52 @@
 package frc.robot;
 
+import com.pathplanner.lib.auto.NamedCommands;
 
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.commands.PathPlannerAuto;
-/* 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.trajectory.TrajectoryConfig;
-import edu.wpi.first.math.trajectory.TrajectoryGenerator;
-*/
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
-//import edu.wpi.first.wpilibj.smartdashboard.Field2d;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.commands.arm.SetArmPosition;
+import frc.robot.commands.autos.HaltCommand;
+import frc.robot.commands.autos.IntakeShootCommand;
+import frc.robot.commands.autos.RevShooterCommand;
 import frc.robot.robot_subsystems.ArmSubsystem;
 import frc.robot.robot_subsystems.DriveSubsystem;
+import frc.robot.robot_subsystems.IntakeSubsystem;
+import frc.robot.robot_subsystems.ShooterSubsystem;
 
 public class RobotContainer {
     
     public static final double GAMEPAD_AXIS_THRESHOLD = 0.2;
-    private final SendableChooser<Command> autoChooser;
-    //private final SendableChooser<Command> sideChooser;
     private final DriveSubsystem driveSubsystem = new DriveSubsystem();
     private final ArmSubsystem armSubsystem = new ArmSubsystem();
-    /*
-    private List<PathPlannerPath> pathGroup;
-    private Pose2d startingPose;
-    private Pose2d endingPose;
-    private PathPlannerPath path;
-    */
+    private final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
+    private final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
     
     
     Joystick driverGamepad = new Joystick(RobotConstants.Ports.CONTROLLER.DRIVER_JOYSTICK);
     XboxController armGamepad = new XboxController(RobotConstants.Ports.CONTROLLER.ARM_JOYSTICK);
 
     // the container for the robot. contains subsystems, OI devices, commands
-    public RobotContainer() {
+    public RobotContainer() 
+    {
+        /*
+         * Registering named commands so they can be used to create Event Markers and
+         * Autos. All named commands MUST be registered before creating a Pathplanner
+         * plan or auto. Any named commands registered after path/auto creation will not
+         * be used.
+         */
+        NamedCommands.registerCommand("Set Arm Position", new SetArmPosition(getArmSubsystem(), 45)); // TODO: review angle
+        NamedCommands.registerCommand("Shooter Rev", new RevShooterCommand(getShooterSubsystem()));
+        NamedCommands.registerCommand("Intake and Shoot", new IntakeShootCommand(getShooterSubsystem(), getIntakeSubsystem()));
+        NamedCommands.registerCommand("Halt", new HaltCommand(getShooterSubsystem(), getIntakeSubsystem()));
 
-        
-        // build an auto chooser This will use Commands.none() as the default option
-        autoChooser = AutoBuilder.buildAutoChooser();
 
         driveSubsystem.initialize();
 
         // configure the trigger bindings
         configureBindings();
-
-        SendableChooser<Command> autoChooser = AutoBuilder.buildAutoChooser();
-        SmartDashboard.putData("Auto Mode", autoChooser);
 
     }
     
@@ -66,12 +59,7 @@ public class RobotContainer {
    * PS4} controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
    * joysticks}.
    */
-    private void configureBindings()
-    {
-        // adds a button to run Example Path (CLICK THE BUTTON)
-        // Don't even bother with this.. :/
-        //SmartDashboard.putData("Straight Path", new PathPlannerAuto("Straight Path"));
-    }
+    private void configureBindings(){}
 
     // passes the autonomous command to the main Robot class
     public Command getAutonomousCommand()
@@ -86,7 +74,19 @@ public class RobotContainer {
         return armSubsystem;
     }
     
-    public DriveSubsystem getDriveSubsystem() {
+    public DriveSubsystem getDriveSubsystem()
+    {
         return driveSubsystem;
     }
+
+    public ShooterSubsystem getShooterSubsystem()
+    {
+        return shooterSubsystem;
+    }
+
+    public IntakeSubsystem getIntakeSubsystem()
+    {
+        return intakeSubsystem;
+    }
+
 }

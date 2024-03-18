@@ -13,12 +13,10 @@ public class HaltCommand extends Command {
     {
         this.shooter = shooter;
         this.intake = intake;
+        addRequirements(shooter, intake);
     }
 
-    public void initialize() 
-    {
-
-    }
+    public void initialize() {}
 
     public void execute()
     {
@@ -26,10 +24,7 @@ public class HaltCommand extends Command {
         intake.brake();
     }
 
-    public void end(boolean interrupted)
-    {
-
-    }
+    public void end(boolean interrupted) {}
 
     public boolean isFinished()
     {
