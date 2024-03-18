@@ -69,14 +69,16 @@ public class RobotContainer {
     private void configureBindings()
     {
         // adds a button to run Example Path (CLICK THE BUTTON)
-        SmartDashboard.putData("Straight Path", new PathPlannerAuto("Straight Path"));
+        // Don't even bother with this.. :/
+        //SmartDashboard.putData("Straight Path", new PathPlannerAuto("Straight Path"));
     }
 
     // passes the autonomous command to the main Robot class
     public Command getAutonomousCommand()
     {
         //return autoChooser.getSelected();
-        return  driveSubsystem.auton();
+        // I'm too lazy to deal with autoChooser :/
+        return driveSubsystem.auton();
     }
 
     public ArmSubsystem getArmSubsystem()

@@ -151,12 +151,12 @@ public final class RobotConstants {
         public static final int leadMotorId = 12;
         public static final int followerMotorId = 13;
 
-        public static final double shaftEncoderOffset_deg = 0; // needs to be tuned
+        // NOT NEEDED!!!!! : ((public static final double shaftEncoderOffset_deg = ; // needs to be tuned
 
         // pid
-        public static final double kP = .000095;
+        public static final double kP = 0.000026;
         public static final double kI = 0;
-        public static final double kD = .00000165;
+        public static final double kD = 0.0000124;
 
         public static final double maxOutput = .5;
         public static final double minOutput = -maxOutput;
@@ -165,9 +165,9 @@ public final class RobotConstants {
 
         // feedforward
         public static final double kS = 0;
-        public static final double kG = .5;
+        public static final double kG = 2170.14;
         public static final double kV = 0;
-        public static final double kA = 0;
+        public static final double kA = 112.42;
 
         public static final double verticalArmPos_deg = 90;
 

@@ -19,7 +19,7 @@ public class SetArmPosition extends Command {
 	 */
 	public SetArmPosition(ArmSubsystem arm, double targetPosition_deg) {
 		this.arm = arm;
-		this.targetPosition_rad = Units.degreesToRadians(targetPosition_deg);
+		this.targetPosition_rad = targetPosition_deg;
 		addRequirements(arm);
 	}
 
@@ -27,6 +27,7 @@ public class SetArmPosition extends Command {
     public void initialize()
     {
         arm.setPosition(targetPosition_rad);
+        System.out.println(targetPosition_rad);
     }
 
     @Override
@@ -40,6 +41,7 @@ public class SetArmPosition extends Command {
         {
             arm.stop();
         }
+        //arm.stop();
     }
 
     // returns true when command should end

@@ -24,8 +24,8 @@ public class OperatorInterface {
                                 .setDefaultCommand(new DriveCommand(robotContainer.getDriveSubsystem(), driveJoystick));
 
                 new JoystickButton(operatorController, 1).onTrue(new SetArmPosition(robotContainer.getArmSubsystem(), 5)); // low for speaker
-                new JoystickButton(operatorController, 3).onTrue(new SetArmPosition(robotContainer.getArmSubsystem(), 90)); // directly upwards for defense
-                new JoystickButton(operatorController, 4).onTrue(new SetArmPosition(robotContainer.getArmSubsystem(), 48)); // high for amp
+                new JoystickButton(operatorController, 3).onTrue(new SetArmPosition(robotContainer.getArmSubsystem(), 45)); // directly upwards for defense
+                new JoystickButton(operatorController, 4).onTrue(new SetArmPosition(robotContainer.getArmSubsystem(), 100)); // high for amp
 
         }
 }
