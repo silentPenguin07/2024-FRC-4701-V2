@@ -10,7 +10,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
     public IntakeSubsystem()
     {
-        controller = new Spark(2);
+        controller = new Spark(1);
     }
 
     public void intake(boolean reverse)

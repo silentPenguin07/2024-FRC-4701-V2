@@ -125,7 +125,7 @@ public final class RobotConstants {
             public static final double JOYSTICK_AXIS_THRESHOLD = 0.2;
             public static final int DRIVER_JOYSTICK = 0;
             public static final int ARM_JOYSTICK = 1;
-            public static final double ARM_JOYSTICK_AXIS_THRESHOLD = 0.3;
+            public static final double ARM_JOYSTICK_AXIS_THRESHOLD = 0.5;
             public static final int PANEL = 2;
         }
     }
@@ -166,9 +166,9 @@ public final class RobotConstants {
 
         // feedforward
         public static final double kS = 0;
-        public static final double kG = 2170.14;
+        public static final double kG = 1446.76;
         public static final double kV = 0;
-        public static final double kA = 112.42;
+        public static final double kA = 74.94;
 
         public static final double verticalArmPos_deg = 90;
 

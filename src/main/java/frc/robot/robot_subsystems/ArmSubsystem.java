@@ -35,7 +35,7 @@ public class ArmSubsystem extends SubsystemBase {
 
     private double targetPosition_deg = 0;
 
-	private double relativeEncoderOffset_deg = absEncoder.getAbsolutePosition();
+	private double relativeEncoderOffset_deg = -Math.abs(absEncoder.getAbsolutePosition());
 
     // constructor
 
@@ -61,7 +61,7 @@ public class ArmSubsystem extends SubsystemBase {
 		followerMotor.follow(leadMotor, true);
 
 		// revolutions * deg / rev = deg
-		relativeEncoder.setPositionConversionFactor(360);
+		relativeEncoder.setPositionConversionFactor(360/35);
 		// rev / sec * sec / min = RPM
 		relativeEncoder.setVelocityConversionFactor(60);
 		// TODO: ERROR: relativeEncoder.setInverted(true);
@@ -77,6 +77,7 @@ public class ArmSubsystem extends SubsystemBase {
 		pidController.setOutputRange(minOutput, maxOutput);
 		// since we are using smartmotion, the PID numbers are for velocity control, not position.
 		pidController.setP(kP);
+		pidController.setI(kI);
 		pidController.setD(kD);
 		// Treats 0 and 360 degrees as the same number, so going from one side of 0 to the other doesnt make it do a 360
 		pidController.setPositionPIDWrappingEnabled(true);
@@ -135,7 +136,7 @@ public class ArmSubsystem extends SubsystemBase {
 	}
 
 	public boolean closeEnough() {
-		return MathUtil.isNear(targetPosition_deg, relativeEncoder.getPosition() - relativeEncoderOffset_deg, accuracyTolerance_deg);
+		return MathUtil.isNear(targetPosition_deg, absEncoder.getAbsolutePosition(), accuracyTolerance_deg);
 	}
 
     

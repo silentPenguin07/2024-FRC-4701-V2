@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.commands.arm.ManualArmCommand;
 import frc.robot.commands.arm.SetArmPosition;
 import frc.robot.commands.autos.HaltCommand;
 import frc.robot.commands.autos.IntakeShootCommand;
@@ -26,7 +27,6 @@ public class RobotContainer {
     
     
     Joystick driverGamepad = new Joystick(RobotConstants.Ports.CONTROLLER.DRIVER_JOYSTICK);
-    XboxController armGamepad = new XboxController(RobotConstants.Ports.CONTROLLER.ARM_JOYSTICK);
 
     // the container for the robot. contains subsystems, OI devices, commands
     public RobotContainer() 
@@ -38,9 +38,9 @@ public class RobotContainer {
          * be used.
          */
         NamedCommands.registerCommand("Set Arm Position", new SetArmPosition(getArmSubsystem(), 45)); // TODO: review angle
-        NamedCommands.registerCommand("Shooter Rev", new RevShooterCommand(getShooterSubsystem()));
-        NamedCommands.registerCommand("Intake and Shoot", new IntakeShootCommand(getShooterSubsystem(), getIntakeSubsystem()));
-        NamedCommands.registerCommand("Halt", new HaltCommand(getShooterSubsystem(), getIntakeSubsystem()));
+        //NamedCommands.registerCommand("Shooter Rev", new RevShooterCommand(getShooterSubsystem()));
+        //NamedCommands.registerCommand("Intake and Shoot", new IntakeShootCommand(getShooterSubsystem(), getIntakeSubsystem()));
+        //NamedCommands.registerCommand("Halt", new HaltCommand(getShooterSubsystem(), getIntakeSubsystem()));
 
 
         driveSubsystem.initialize();
@@ -59,7 +59,7 @@ public class RobotContainer {
    * PS4} controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
    * joysticks}.
    */
-    private void configureBindings(){}
+    private void configureBindings() {}
 
     // passes the autonomous command to the main Robot class
     public Command getAutonomousCommand()
@@ -78,7 +78,7 @@ public class RobotContainer {
     {
         return driveSubsystem;
     }
-
+    
     public ShooterSubsystem getShooterSubsystem()
     {
         return shooterSubsystem;
@@ -88,5 +88,6 @@ public class RobotContainer {
     {
         return intakeSubsystem;
     }
+    
 
 }

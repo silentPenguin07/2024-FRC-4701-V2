@@ -6,6 +6,9 @@ import frc.robot.RobotConstants;
 import frc.robot.RobotContainer;
 import frc.robot.commands.DriveCommand;
 import frc.robot.commands.XCommand;
+import frc.robot.commands.arm.ManualArmCommand;
+import frc.robot.commands.arm.RunIntake;
+import frc.robot.commands.arm.RunShooter;
 import frc.robot.commands.arm.SetArmPosition;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
@@ -24,9 +27,19 @@ public class OperatorInterface {
                                 .setDefaultCommand(new DriveCommand(robotContainer.getDriveSubsystem(), driveJoystick));
 
                 // TODO: fix these angles
-                new JoystickButton(operatorController, 1).onTrue(new SetArmPosition(robotContainer.getArmSubsystem(), 5)); // low for speaker
-                new JoystickButton(operatorController, 3).onTrue(new SetArmPosition(robotContainer.getArmSubsystem(), 45)); // directly upwards for defense
-                new JoystickButton(operatorController, 4).onTrue(new SetArmPosition(robotContainer.getArmSubsystem(), 100)); // high for amp
+                /* 
+                robotContainer.getArmSubsystem()
+                                .setDefaultCommand(new ManualArmCommand(robotContainer.getArmSubsystem(), operatorController::getLeftY));
+                */
+                new JoystickButton(operatorController, 1).onTrue(new SetArmPosition(robotContainer.getArmSubsystem(), 20)); // A-low for speaker
+                new JoystickButton(operatorController, 3).onTrue(new SetArmPosition(robotContainer.getArmSubsystem(), 45)); // X-directly upwards for defense
+                new JoystickButton(operatorController, 4).onTrue(new SetArmPosition(robotContainer.getArmSubsystem(), 240)); // Y-high for amp
+
+                new JoystickButton(operatorController, 5).whileTrue(new RunIntake(robotContainer.getIntakeSubsystem(), false));
+                new JoystickButton(operatorController, 6).whileTrue(new RunShooter(robotContainer.getShooterSubsystem(), false));
+
+                new JoystickButton(operatorController, 9).whileTrue(new RunIntake(robotContainer.getIntakeSubsystem(), true));
+                new JoystickButton(operatorController, 2).whileTrue(new RunShooter(robotContainer.getShooterSubsystem(), true));
 
                 // TODO: implement joystick controlled arm!
         }

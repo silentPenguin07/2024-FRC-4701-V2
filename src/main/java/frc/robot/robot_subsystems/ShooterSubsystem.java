@@ -11,8 +11,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
     public ShooterSubsystem()
     {
-        leader = new CANSparkMax(0, MotorType.kBrushless);
-        follower = new CANSparkMax(1, MotorType.kBrushless);
+        leader = new CANSparkMax(10, MotorType.kBrushless);
+        follower = new CANSparkMax(11, MotorType.kBrushless);
 
         follower.follow(leader);
     }

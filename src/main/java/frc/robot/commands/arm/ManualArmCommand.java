@@ -1,5 +1,7 @@
 package frc.robot.commands.arm;
 
+import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -8,15 +10,15 @@ import frc.robot.robot_subsystems.ArmSubsystem;
 
 public class ManualArmCommand extends Command {
     
-    public static final double MAX_SPEED_PERCENT = .5; // don't trust the operator to be gentle
+    public static final double MAX_SPEED_PERCENT = .4; // don't trust the operator to be gentle
 
     private final ArmSubsystem arm;
-    private final XboxController joystick;
+    private DoubleSupplier speedSupplier;
 
-    public ManualArmCommand(ArmSubsystem arm, XboxController joystick)
+    public ManualArmCommand(ArmSubsystem arm, DoubleSupplier speedSupplier)
     {
         this.arm = arm;
-        this.joystick = joystick;
+        this.speedSupplier = speedSupplier;
         addRequirements(arm);
     }
 
@@ -26,23 +28,37 @@ public class ManualArmCommand extends Command {
     @Override
     public void execute()
     {
-        // calculations (just copy paste)
-        double yRaw = joystick.getLeftY();
         
-        double yConstrained = MathUtil.applyDeadband(MathUtil.clamp(yRaw, -MAX_SPEED_PERCENT, MAX_SPEED_PERCENT),
-                RobotConstants.Ports.CONTROLLER.ARM_JOYSTICK_AXIS_THRESHOLD);
+        // apply deadband to input. Run stationary feedfordward ("stopped") if banded input is 0
+        double deadbandInput = scaleAxis(speedSupplier.getAsDouble());
 
-        double ySquared = Math.copySign(yConstrained * yConstrained, yConstrained);
 
-        if (ySquared < 0) //TODO: does this account for tolerance?
+        if (deadbandInput == 0)
         {
-            arm.stop();
+            //arm.stop();
+        }
+        else
+        {
+            System.out.println(-(MAX_SPEED_PERCENT * deadbandInput) * 12);
+            arm.setMotorVoltage(-(MAX_SPEED_PERCENT * deadbandInput) * 12);
         }
 
-        // TODO: properly scale joystick input to arm output voltage (yay for NEOs)
-        arm.setMotorVoltage(-ySquared);
     }
 
+    public void end(boolean interrupted)
+    {
+        arm.stop();
+    }
 
+    public boolean isFinished()
+    {
+        return false;
+    }
+
+    // helper method to scale joystick axis
+	public static double scaleAxis(double value) {
+		value = MathUtil.applyDeadband(value, 0.3); // second para is deadband value
+		return Math.copySign(value * value, value);
+	}
 
 }
