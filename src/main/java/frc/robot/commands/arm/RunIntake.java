@@ -27,7 +27,7 @@ public class RunIntake extends Command {
 
     public void end(boolean interrupted)
     {
-
+        intake.brake();
     }
 
     public boolean isFinished()

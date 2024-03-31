@@ -16,12 +16,12 @@
     },
     {
       "anchor": {
-        "x": 2.3959836112874378,
-        "y": 5.53650223579517
+        "x": 2.6456402107795283,
+        "y": 7.1078702443630295
       },
       "prevControl": {
-        "x": 1.3959836112874378,
-        "y": 5.53650223579517
+        "x": 1.2358147077653743,
+        "y": 7.1078702443630295
       },
       "nextControl": null,
       "isLocked": false,
@@ -47,17 +47,34 @@
           ]
         }
       }
+    },
+    {
+      "name": "Shoot Amp",
+      "waypointRelativePos": 0.7,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "wait",
+              "data": {
+                "waitTime": 3.0
+              }
+            }
+          ]
+        }
+      }
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 3.0,
-    "maxAcceleration": 0.8,
+    "maxVelocity": 4.5,
+    "maxAcceleration": 2.4,
     "maxAngularVelocity": 720.0,
     "maxAngularAcceleration": 720.0
   },
   "goalEndState": {
     "velocity": 1.0,
-    "rotation": 178.77341306686827,
+    "rotation": 90.0,
     "rotateFast": true
   },
   "reversed": false,

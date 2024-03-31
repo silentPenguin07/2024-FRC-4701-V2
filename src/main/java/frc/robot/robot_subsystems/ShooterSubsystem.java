@@ -14,7 +14,7 @@ public class ShooterSubsystem extends SubsystemBase {
         leader = new CANSparkMax(10, MotorType.kBrushless);
         follower = new CANSparkMax(11, MotorType.kBrushless);
 
-        follower.follow(leader);
+        follower.follow(leader, true);
     }
 
     // Precondition: reverse determines whether shooter spins forward or backward
@@ -22,11 +22,11 @@ public class ShooterSubsystem extends SubsystemBase {
     {
         if (!reverse)
         {
-            leader.set(.8);
+            leader.set(1);
         }
         else
         {
-            leader.set(-.8);
+            leader.set(-1);
         }
     }
 

@@ -6,11 +6,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 
 public class SetArmPosition extends Command {
     
-    // instance data
     private ArmSubsystem arm;
-    private double targetPosition_rad;
+	protected double targetPosition_deg; // did I do this right?
 
-    /**
+	/**
 	 * Command to set the arm position, cancels the command and moves on 
 	 * after being within the range given by {@link ArmConstants#accuracyTolerance_deg accuracyTolerance}
 	 * @param arm Arm subsystem
@@ -18,35 +17,32 @@ public class SetArmPosition extends Command {
 	 */
 	public SetArmPosition(ArmSubsystem arm, double targetPosition_deg) {
 		this.arm = arm;
-		this.targetPosition_rad = targetPosition_deg;
+		this.targetPosition_deg = targetPosition_deg;
 		addRequirements(arm);
 	}
 
-    @Override
-    public void initialize()
-    {
-        arm.setPosition(targetPosition_rad);
-        System.out.println(targetPosition_rad);
-    }
+	@Override
+	public void initialize() {
+		
+		arm.setPosition(targetPosition_deg);
+		
+	}
 
-    @Override
-    public void execute() {}
+	@Override
+	public void execute() {}
 
-    @Override
-    public void end(boolean interrupted)
-    {
-        // only stops if interrupted. Otherwise, continues adjusting arm position and moves on to another command
-        if (interrupted)
-        {
-            arm.stop();
-        }
-        //arm.stop();
-    }
+	@Override
+	public void end(boolean interrupted) {
+		// only stop if interrupted. Otherwise, continue adjusting arm position just move on to another command
+		if (interrupted) {
+			arm.stop();
+		}
+	}
 
-    // returns true when command should end
-    public boolean isFinished()
-    {
-        return arm.closeEnough();
-    }
+	// Returns true when the command should end.
+	@Override
+	public boolean isFinished() {
+		return arm.closeEnough();
+	}
 
 }

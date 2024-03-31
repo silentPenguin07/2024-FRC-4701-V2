@@ -157,7 +157,7 @@ public final class RobotConstants {
         // pid
         public static final double kP = 0.000026;
         public static final double kI = 0;
-        public static final double kD = 0.0000124;
+        public static final double kD = 0.000012; //024
 
         public static final double maxOutput = .5;
         public static final double minOutput = -maxOutput;
@@ -166,9 +166,9 @@ public final class RobotConstants {
 
         // feedforward
         public static final double kS = 0;
-        public static final double kG = 1446.76;
+        public static final double kG = 17.36;
         public static final double kV = 0;
-        public static final double kA = 74.94;
+        public static final double kA = 6.74;
 
         public static final double verticalArmPos_deg = 90;
 
@@ -180,7 +180,11 @@ public final class RobotConstants {
         // public static final int gearRatio = 1; // 1 IS PLACEHOLDER
 
         // closeEnough
-        public static final double accuracyTolerance_deg = 10;
+        public static final double accuracyTolerance_deg = 12;
+        public static final double armOffset_deg = 42;
+
+        public static final double LOW_deg = 45;
+        public static final double HIGH_deg = 85;
 
     }
 

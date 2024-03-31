@@ -7,7 +7,6 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.commands.arm.ManualArmCommand;
 import frc.robot.commands.arm.SetArmPosition;
 import frc.robot.commands.autos.HaltCommand;
 import frc.robot.commands.autos.IntakeShootCommand;
@@ -66,7 +65,7 @@ public class RobotContainer {
     {
         //return autoChooser.getSelected();
         // I'm too lazy to deal with autoChooser :/
-        return driveSubsystem.auton();
+        return null;
     }
 
     public ArmSubsystem getArmSubsystem()

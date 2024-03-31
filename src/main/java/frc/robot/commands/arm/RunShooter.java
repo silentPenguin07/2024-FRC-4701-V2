@@ -26,7 +26,7 @@ public class RunShooter extends Command {
 
     public void end(boolean interrupted)
     {
-
+        shooter.brake();
     }
 
     public boolean isFinished()

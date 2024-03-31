@@ -6,6 +6,7 @@ import com.kauailabs.navx.frc.AHRS;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
+import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.PathPlannerLogging;
 import com.pathplanner.lib.util.ReplanningConfig;
 
@@ -83,7 +84,12 @@ public class DriveSubsystem extends EntechSubsystem{
             this::resetOdometry, // resets odometry
             this::getSpeeds, // ChassisSpeeds supplier
             this::driveRobotRelative,
-            new HolonomicPathFollowerConfig(4.5, Units.inchesToMeters(21.287), new ReplanningConfig()),
+            new HolonomicPathFollowerConfig(
+                new PIDConstants(.04, 0.0, 0.0), // Translation PID constants
+                new PIDConstants(1.0, 0.0, 0.0), // Rotation PID constants
+                4.5, 
+                Units.inchesToMeters(21.287), 
+                new ReplanningConfig()),
             () -> {
 
                 var alliance = DriverStation.getAlliance();

@@ -13,13 +13,18 @@ import com.revrobotics.SparkPIDController.AccelStrategy;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ArmFeedforward;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Robot;
+import frc.robot.RobotConstants;
+import frc.robot.RobotConstants.ArmConstants;
 
 public class ArmSubsystem extends SubsystemBase {
-    
     // instance data
 
     private CANSparkMax leadMotor = new CANSparkMax(leadMotorId, MotorType.kBrushless);
@@ -35,8 +40,6 @@ public class ArmSubsystem extends SubsystemBase {
 
     private double targetPosition_deg = 0;
 
-	private double relativeEncoderOffset_deg = -Math.abs(absEncoder.getAbsolutePosition());
-
     // constructor
 
     public ArmSubsystem()
@@ -48,8 +51,8 @@ public class ArmSubsystem extends SubsystemBase {
 		leadMotor.setSecondaryCurrentLimit(40);
 		leadMotor.enableVoltageCompensation(12);
 
-		leadMotor.setSoftLimit(SoftLimitDirection.kForward, (float) (110 + relativeEncoderOffset_deg));
-		leadMotor.setSoftLimit(SoftLimitDirection.kReverse, (float) (-1.5 + relativeEncoderOffset_deg));
+		leadMotor.setSoftLimit(SoftLimitDirection.kForward, (float) (Units.degreesToRotations(100)));
+		leadMotor.setSoftLimit(SoftLimitDirection.kReverse, (float) (Units.degreesToRotations(40)));
 		leadMotor.enableSoftLimit(SoftLimitDirection.kForward, true);
 		leadMotor.enableSoftLimit(SoftLimitDirection.kReverse, true);
 		
@@ -61,10 +64,11 @@ public class ArmSubsystem extends SubsystemBase {
 		followerMotor.follow(leadMotor, true);
 
 		// revolutions * deg / rev = deg
-		relativeEncoder.setPositionConversionFactor(360/35);
+		relativeEncoder.setPositionConversionFactor(360 / 35);
 		// rev / sec * sec / min = RPM
 		relativeEncoder.setVelocityConversionFactor(60);
 		// TODO: ERROR: relativeEncoder.setInverted(true);
+		relativeEncoder.setPosition(absEncoder.getAbsolutePosition() - ArmConstants.armOffset_deg);
 
 		pidController.setFeedbackDevice(relativeEncoder);
 		// Smart motion applies a velocity and acceleration limiter as it travels to the target position. More info can be
@@ -80,9 +84,7 @@ public class ArmSubsystem extends SubsystemBase {
 		pidController.setI(kI);
 		pidController.setD(kD);
 		// Treats 0 and 360 degrees as the same number, so going from one side of 0 to the other doesnt make it do a 360
-		pidController.setPositionPIDWrappingEnabled(true);
-		pidController.setPositionPIDWrappingMinInput(0);
-		pidController.setPositionPIDWrappingMaxInput(360);
+		pidController.setPositionPIDWrappingEnabled(false);
 
 		// if (tuningMode) {
 		// new AutoSetterTunableNumber("Arm/kP", kP, (value) -> pidController.setP(value));
@@ -110,7 +112,7 @@ public class ArmSubsystem extends SubsystemBase {
 		SmartDashboard.putNumber("Follower Motor Motor Temperature", followerMotor.getMotorTemperature());
 		SmartDashboard.putNumber("Follower Motor Motor Percent Output", followerMotor.getAppliedOutput());
 
-		SmartDashboard.putNumber("Rel Encoder Position Deg", relativeEncoder.getPosition() - relativeEncoderOffset_deg);
+		SmartDashboard.putNumber("Rel Encoder Position Deg", relativeEncoder.getPosition());
 		SmartDashboard.putNumber("Abs Encoder Position Deg", absEncoder.getAbsolutePosition() * 360); // * 360 to convert from 0-1 range to degrees
 
 	}
@@ -119,26 +121,33 @@ public class ArmSubsystem extends SubsystemBase {
 	// TODO: Review these functions
 	public void setPosition(double position_deg) {
 		targetPosition_deg = position_deg;
-		pidController.setReference(targetPosition_deg + relativeEncoderOffset_deg, ControlType.kSmartMotion, 0,
+		pidController.setReference(targetPosition_deg, ControlType.kPosition, 0,
 			feedforwardController.calculate(Units.degreesToRadians(targetPosition_deg), 0));
 	}
-
+	/* 
 	public void setMotorVoltage(double voltage_V) {
 		SmartDashboard.putNumber("Arm/targetVoltage_V", voltage_V);
 		pidController.setReference(voltage_V, ControlType.kVoltage, 0,
 			feedforwardController.calculate(Units.degreesToRadians(relativeEncoder.getPosition() - relativeEncoderOffset_deg), 0));
+	}*/
+
+	public void up()
+	{
+		leadMotor.set(.15);
 	}
 
 	public void stop() {
+		/*
 		pidController.setReference(0, ControlType.kDutyCycle, 0,
 			feedforwardController.calculate(Units.degreesToRadians(relativeEncoder.getPosition() - relativeEncoderOffset_deg), 0));
-		// Set
+		// Set*/
+		leadMotor.set(0);
+		followerMotor.set(0);
 	}
 
 	public boolean closeEnough() {
-		return MathUtil.isNear(targetPosition_deg, absEncoder.getAbsolutePosition(), accuracyTolerance_deg);
+		return MathUtil.isNear(targetPosition_deg, relativeEncoder.getPosition(), accuracyTolerance_deg);
 	}
-
     
 
 }

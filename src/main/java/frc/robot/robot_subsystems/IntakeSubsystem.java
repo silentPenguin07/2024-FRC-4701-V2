@@ -17,11 +17,11 @@ public class IntakeSubsystem extends SubsystemBase {
     {
         if (!reverse)
         {
-            controller.set(.3);
+            controller.set(.7);
         }
         else
         {
-            controller.set(-.3);
+            controller.set(-.8);
         }
     }
 
