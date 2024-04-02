@@ -29,16 +29,14 @@ public class ArmSubsystem extends SubsystemBase {
 
     private CANSparkMax leadMotor = new CANSparkMax(leadMotorId, MotorType.kBrushless);
 	private CANSparkMax followerMotor = new CANSparkMax(followerMotorId, MotorType.kBrushless);
-	private SparkPIDController pidController = leadMotor.getPIDController();
-	//private RelativeEncoder motorEncoder = leadMotor.getEncoder(); // built-in encoder in the lead NEO
-	// throughbore encoder on hex shaft
 	private DutyCycleEncoder absEncoder = new DutyCycleEncoder(0);
 	private RelativeEncoder relativeEncoder = leadMotor.getEncoder();
 
 	private ArmFeedforward feedforwardController = new ArmFeedforward(kS, kG, kV, kA);
 
-
-    private double targetPosition_deg = 0;
+	private ProfiledPIDController pidController =
+		new ProfiledPIDController(kP, kI, kD, 
+			new TrapezoidProfile.Constraints(MAX_VEL, MAX_ACCEL));
 
     // constructor
 
@@ -48,18 +46,12 @@ public class ArmSubsystem extends SubsystemBase {
 		leadMotor.setIdleMode(IdleMode.kBrake);
 		leadMotor.setInverted(false);
 		leadMotor.setSmartCurrentLimit(40); // sets current limit in amps
-		leadMotor.setSecondaryCurrentLimit(40);
 		leadMotor.enableVoltageCompensation(12);
 
-		leadMotor.setSoftLimit(SoftLimitDirection.kForward, (float) (Units.degreesToRotations(100)));
-		leadMotor.setSoftLimit(SoftLimitDirection.kReverse, (float) (Units.degreesToRotations(40)));
-		leadMotor.enableSoftLimit(SoftLimitDirection.kForward, true);
-		leadMotor.enableSoftLimit(SoftLimitDirection.kReverse, true);
 		
 		followerMotor.restoreFactoryDefaults();
 		followerMotor.setIdleMode(IdleMode.kBrake);
 		followerMotor.setSmartCurrentLimit(40);
-		followerMotor.setSecondaryCurrentLimit(40);
 		followerMotor.enableVoltageCompensation(12);
 		followerMotor.follow(leadMotor, true);
 
@@ -68,28 +60,11 @@ public class ArmSubsystem extends SubsystemBase {
 		// rev / sec * sec / min = RPM
 		relativeEncoder.setVelocityConversionFactor(60);
 		// TODO: ERROR: relativeEncoder.setInverted(true);
-		relativeEncoder.setPosition(absEncoder.getAbsolutePosition() - ArmConstants.armOffset_deg);
+		relativeEncoder.setPosition(absEncoder.getAbsolutePosition() - ARM_OFFSET);
 
-		pidController.setFeedbackDevice(relativeEncoder);
-		// Smart motion applies a velocity and acceleration limiter as it travels to the target position. More info can be
-		// found here:
-		// https://github.com/REVrobotics/SPARK-MAX-Examples/blob/master/Java/Smart%20Motion%20Example/src/main/java/frc/robot/Robot.java
-		pidController.setSmartMotionAccelStrategy(AccelStrategy.kTrapezoidal, 0);
-		pidController.setSmartMotionMaxAccel(maxAccel_rpmps, 0);
-		pidController.setSmartMotionMaxVelocity(maxVelocity_rpm, 0);
-		pidController.setSmartMotionAllowedClosedLoopError(accuracyTolerance_deg, 0);
-		pidController.setOutputRange(minOutput, maxOutput);
-		// since we are using smartmotion, the PID numbers are for velocity control, not position.
-		pidController.setP(kP);
-		pidController.setI(kI);
-		pidController.setD(kD);
-		// Treats 0 and 360 degrees as the same number, so going from one side of 0 to the other doesnt make it do a 360
-		pidController.setPositionPIDWrappingEnabled(false);
+		pidController.setTolerance(ARM_TOLERANCE);
 
-		// if (tuningMode) {
-		// new AutoSetterTunableNumber("Arm/kP", kP, (value) -> pidController.setP(value));
-		// new AutoSetterTunableNumber("Arm/kD", kD, (value) -> pidController.setD(value));
-		// }
+		absEncoder.setPositionOffset(ARM_OFFSET);
 
 		leadMotor.burnFlash();
 		followerMotor.burnFlash();
@@ -100,6 +75,9 @@ public class ArmSubsystem extends SubsystemBase {
 
 	// SmartDashboard output for troubleshooting
 	public void periodic() {
+
+		useOutput(pidController.calculate(getMeasurement()), pidController.getSetpoint());
+
 		SmartDashboard.putNumber("Lead Output Current", leadMotor.getOutputCurrent());
 		SmartDashboard.putNumber("Lead Bus Voltage", leadMotor.getBusVoltage());
 		SmartDashboard.putNumber("Lead Applied Voltage", 12 * leadMotor.getAppliedOutput());
@@ -115,25 +93,26 @@ public class ArmSubsystem extends SubsystemBase {
 		SmartDashboard.putNumber("Rel Encoder Position Deg", relativeEncoder.getPosition());
 		SmartDashboard.putNumber("Abs Encoder Position Deg", absEncoder.getAbsolutePosition() * 360); // * 360 to convert from 0-1 range to degrees
 
+
 	}
 
-
-	// TODO: Review these functions
-	public void setPosition(double position_deg) {
-		targetPosition_deg = position_deg;
-		pidController.setReference(targetPosition_deg, ControlType.kPosition, 0,
-			feedforwardController.calculate(Units.degreesToRadians(targetPosition_deg), 0));
-	}
-	/* 
-	public void setMotorVoltage(double voltage_V) {
-		SmartDashboard.putNumber("Arm/targetVoltage_V", voltage_V);
-		pidController.setReference(voltage_V, ControlType.kVoltage, 0,
-			feedforwardController.calculate(Units.degreesToRadians(relativeEncoder.getPosition() - relativeEncoderOffset_deg), 0));
-	}*/
-
-	public void up()
+	public double getMeasurement()
 	{
-		leadMotor.set(.15);
+		return Math.abs(absEncoder.getAbsolutePosition() * 360);
+	}
+
+	public void setPosition(double position_deg) 
+	{
+		pidController.setGoal(new TrapezoidProfile.State(position_deg, 0));
+	}
+
+	private void useOutput(double output, TrapezoidProfile.State setPoint)
+	{
+		double ff = feedforwardController.calculate(setPoint.position, setPoint.velocity);
+
+		double voltageOut = output + ff;
+
+		leadMotor.setVoltage(voltageOut);
 	}
 
 	public void stop() {
@@ -146,7 +125,7 @@ public class ArmSubsystem extends SubsystemBase {
 	}
 
 	public boolean closeEnough() {
-		return MathUtil.isNear(targetPosition_deg, relativeEncoder.getPosition(), accuracyTolerance_deg);
+		return pidController.atGoal();
 	}
     
 

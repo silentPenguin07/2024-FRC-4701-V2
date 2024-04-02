@@ -180,8 +180,11 @@ public final class RobotConstants {
         // public static final int gearRatio = 1; // 1 IS PLACEHOLDER
 
         // closeEnough
-        public static final double accuracyTolerance_deg = 12;
-        public static final double armOffset_deg = 42;
+        public static final double ARM_TOLERANCE = 12;
+        public static final double ARM_OFFSET = 42;
+
+        public static final double MAX_VEL = 20;
+        public static final double MAX_ACCEL = 30;
 
         public static final double LOW_deg = 45;
         public static final double HIGH_deg = 85;
