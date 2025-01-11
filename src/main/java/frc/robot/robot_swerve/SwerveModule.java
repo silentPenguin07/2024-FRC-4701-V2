@@ -8,7 +8,7 @@ import com.revrobotics.SparkPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import frc.robot.RobotConstants.SwerveModuleConstants;
+import frc.robot.Constants.SwerveModuleConstants;
 import frc.robot.sensors.ThriftyEncoder;
 
 public class SwerveModule {

@@ -9,7 +9,7 @@ import com.revrobotics.SparkLimitSwitch.Type;
 
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
-import frc.robot.RobotConstants;
+import frc.robot.Constants;
 import frc.robot.controllers.PositionControllerConfig;
 
 public class BaseSparkMaxPositionSubsystem {
@@ -136,7 +136,7 @@ public class BaseSparkMaxPositionSubsystem {
         if (requestedPosition.isPresent()) {
             return requestedPosition.get();
         } else {
-            return RobotConstants.INDICATOR_VALUES.POSITION_NOT_SET;
+            return Constants.INDICATOR_VALUES.POSITION_NOT_SET;
         }
     }
 

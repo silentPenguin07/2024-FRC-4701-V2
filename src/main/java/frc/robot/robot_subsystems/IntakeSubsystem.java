@@ -1,33 +1,34 @@
 package frc.robot.robot_subsystems;
 
-import edu.wpi.first.wpilibj.motorcontrol.Spark;
-
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
+
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkLowLevel.MotorType;;
 
 public class IntakeSubsystem extends SubsystemBase {
-    
-    private Spark controller;
+
+    private CANSparkMax m_intake;
 
     public IntakeSubsystem()
     {
-        controller = new Spark(1);
+        CANSparkMax m_intake = new CANSparkMax(Constants.ArmConstants.INTAKE_MOTOR_ID, MotorType.kBrushless);
     }
 
     public void intake(boolean reverse)
     {
         if (!reverse)
         {
-            controller.set(.3);
+            m_intake.set(0.4);
         }
-        else
-        {
-            controller.set(-.3);
+        else{
+            m_intake.set(-0.4);
         }
     }
 
     public void brake()
     {
-        controller.set(0);
+        m_intake.set(0);
     }
 
 }

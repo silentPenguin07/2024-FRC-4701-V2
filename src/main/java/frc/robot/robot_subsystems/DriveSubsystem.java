@@ -6,6 +6,7 @@ import com.kauailabs.navx.frc.AHRS;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
+import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.PathPlannerLogging;
 import com.pathplanner.lib.util.ReplanningConfig;
 
@@ -27,8 +28,8 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 //import frc.robot.Robot;
-import frc.robot.RobotConstants;
-import frc.robot.RobotConstants.DrivetrainConstants;
+import frc.robot.Constants;
+import frc.robot.Constants.DrivetrainConstants;
 import frc.robot.robot_swerve.SwerveModule;
 import frc.robot.robot_swerve.SwerveUtils;
 
@@ -38,7 +39,7 @@ public class DriveSubsystem extends EntechSubsystem{
     private static final boolean ENABLED = true;
 
     public static final double FRONT_LEFT_VIRTUAL_OFFSET_RADIANS = 2.32759093;
-    public static final double FRONT_RIGHT_VIRTUAL_OFFSET_RADIANS = 1.489458748;
+    public static final double FRONT_RIGHT_VIRTUAL_OFFSET_RADIANS = 1.489458748; 
     public static final double REAR_LEFT_VIRTUAL_OFFSET_RADIANS = 5.80897935;
     public static final double REAR_RIGHT_VIRTUAL_OFFSET_RADIANS = 0.7840019;
 
@@ -83,7 +84,12 @@ public class DriveSubsystem extends EntechSubsystem{
             this::resetOdometry, // resets odometry
             this::getSpeeds, // ChassisSpeeds supplier
             this::driveRobotRelative,
-            new HolonomicPathFollowerConfig(4.5, Units.inchesToMeters(21.287), new ReplanningConfig()),
+            new HolonomicPathFollowerConfig(
+                new PIDConstants(.04, 0.0, 0.0), // Translation PID constants
+                new PIDConstants(1.0, 0.0, 0.0), // Rotation PID constants
+                4.5, 
+                Units.inchesToMeters(21.287), 
+                new ReplanningConfig()),
             () -> {
 
                 var alliance = DriverStation.getAlliance();
@@ -119,7 +125,7 @@ public class DriveSubsystem extends EntechSubsystem{
         return m_odometry.getPoseMeters();
     }
     public Command auton() {
-        return new PathPlannerAuto("Move and Score");
+        return new PathPlannerAuto("Straight Auto");
     }
 
     /**
@@ -392,24 +398,24 @@ public class DriveSubsystem extends EntechSubsystem{
     public void initialize() {
         if (ENABLED) {
             m_frontLeft = new SwerveModule(
-                    RobotConstants.Ports.CAN.FRONT_LEFT_DRIVING,
-                    RobotConstants.Ports.CAN.FRONT_LEFT_TURNING,
-                    RobotConstants.Ports.ANALOG.FRONT_LEFT_TURNING_ABSOLUTE_ENCODER, false);
+                    Constants.Ports.CAN.FRONT_LEFT_DRIVING,
+                    Constants.Ports.CAN.FRONT_LEFT_TURNING,
+                    Constants.Ports.ANALOG.FRONT_LEFT_TURNING_ABSOLUTE_ENCODER, false);
 
             m_frontRight = new SwerveModule(
-                    RobotConstants.Ports.CAN.FRONT_RIGHT_DRIVING,
-                    RobotConstants.Ports.CAN.FRONT_RIGHT_TURNING,
-                    RobotConstants.Ports.ANALOG.FRONT_RIGHT_TURNING_ABSOLUTE_ENCODER, false);
+                    Constants.Ports.CAN.FRONT_RIGHT_DRIVING,
+                    Constants.Ports.CAN.FRONT_RIGHT_TURNING,
+                    Constants.Ports.ANALOG.FRONT_RIGHT_TURNING_ABSOLUTE_ENCODER, false);
 
             m_rearLeft = new SwerveModule(
-                    RobotConstants.Ports.CAN.REAR_LEFT_DRIVING,
-                    RobotConstants.Ports.CAN.REAR_LEFT_TURNING,
-                    RobotConstants.Ports.ANALOG.REAR_LEFT_TURNING_ABSOLUTE_ENCODER, false);
+                    Constants.Ports.CAN.REAR_LEFT_DRIVING,
+                    Constants.Ports.CAN.REAR_LEFT_TURNING,
+                    Constants.Ports.ANALOG.REAR_LEFT_TURNING_ABSOLUTE_ENCODER, false);
 
             m_rearRight = new SwerveModule(
-                    RobotConstants.Ports.CAN.REAR_RIGHT_DRIVING,
-                    RobotConstants.Ports.CAN.REAR_RIGHT_TURNING,
-                    RobotConstants.Ports.ANALOG.REAR_RIGHT_TURNING_ABSOLUTE_ENCODER, false);
+                    Constants.Ports.CAN.REAR_RIGHT_DRIVING,
+                    Constants.Ports.CAN.REAR_RIGHT_TURNING,
+                    Constants.Ports.ANALOG.REAR_RIGHT_TURNING_ABSOLUTE_ENCODER, false);
 
             m_gyro = new AHRS(Port.kMXP);
             // m_gyro.calibrate();

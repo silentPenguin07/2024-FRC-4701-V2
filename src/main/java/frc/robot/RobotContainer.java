@@ -7,26 +7,18 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.commands.arm.ManualArmCommand;
-import frc.robot.commands.arm.SetArmPosition;
-import frc.robot.commands.autos.HaltCommand;
-import frc.robot.commands.autos.IntakeShootCommand;
-import frc.robot.commands.autos.RevShooterCommand;
-import frc.robot.robot_subsystems.ArmSubsystem;
+import frc.robot.robot_subsystems.CoralElevatorSubsystem;
 import frc.robot.robot_subsystems.DriveSubsystem;
 import frc.robot.robot_subsystems.IntakeSubsystem;
-import frc.robot.robot_subsystems.ShooterSubsystem;
 
 public class RobotContainer {
     
     public static final double GAMEPAD_AXIS_THRESHOLD = 0.2;
     private final DriveSubsystem driveSubsystem = new DriveSubsystem();
-    private final ArmSubsystem armSubsystem = new ArmSubsystem();
-    private final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
     private final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
+    private final CoralElevatorSubsystem coralElevatorSubsystem = new CoralElevatorSubsystem();
     
-    
-    Joystick driverGamepad = new Joystick(RobotConstants.Ports.CONTROLLER.DRIVER_JOYSTICK);
+    Joystick driverGamepad = new Joystick(Constants.Ports.CONTROLLER.DRIVER_JOYSTICK);
 
     // the container for the robot. contains subsystems, OI devices, commands
     public RobotContainer() 
@@ -37,13 +29,13 @@ public class RobotContainer {
          * plan or auto. Any named commands registered after path/auto creation will not
          * be used.
          */
-        NamedCommands.registerCommand("Set Arm Position", new SetArmPosition(getArmSubsystem(), 45)); // TODO: review angle
         //NamedCommands.registerCommand("Shooter Rev", new RevShooterCommand(getShooterSubsystem()));
         //NamedCommands.registerCommand("Intake and Shoot", new IntakeShootCommand(getShooterSubsystem(), getIntakeSubsystem()));
         //NamedCommands.registerCommand("Halt", new HaltCommand(getShooterSubsystem(), getIntakeSubsystem()));
-
+        //NamedCommands.registerCommand("Reverse Intake", new RunIntake(intakeSubsystem, true));
 
         driveSubsystem.initialize();
+        
 
         // configure the trigger bindings
         configureBindings();
@@ -68,26 +60,20 @@ public class RobotContainer {
         // I'm too lazy to deal with autoChooser :/
         return driveSubsystem.auton();
     }
-
-    public ArmSubsystem getArmSubsystem()
-    {
-        return armSubsystem;
-    }
     
     public DriveSubsystem getDriveSubsystem()
     {
         return driveSubsystem;
-    }
-    
-    public ShooterSubsystem getShooterSubsystem()
-    {
-        return shooterSubsystem;
     }
 
     public IntakeSubsystem getIntakeSubsystem()
     {
         return intakeSubsystem;
     }
-    
+
+    public CoralElevatorSubsystem getCoralElevatorSubsystem()
+    {
+        return coralElevatorSubsystem;
+    }
 
 }

@@ -10,7 +10,7 @@ import com.revrobotics.SparkLimitSwitch;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import entechlib.util.EntechUtils;
-import frc.robot.RobotConstants;
+import frc.robot.Constants;
 
 public class SparkMaxPositionController implements Sendable, PositionController{
     
@@ -74,7 +74,7 @@ public class SparkMaxPositionController implements Sendable, PositionController{
 		if (requestedPosition.isPresent()) {
 			return requestedPosition.get();
 		} else {
-			return RobotConstants.INDICATOR_VALUES.POSITION_NOT_SET;
+			return Constants.INDICATOR_VALUES.POSITION_NOT_SET;
 		}
 	}
 
